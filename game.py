@@ -43,6 +43,21 @@ class Mastermind:
             for _ in range(self.code_length)
         ]
 
+    def show_history(self):
+        if not self.history:
+            print("No guesses yet.")
+            return
+
+        print("\nGuess History:")
+        print("-----------------------------")
+        for number, (guess, exact, partial) in enumerate(self.history, start=1):
+            print(
+                f"{number}. {guess} "
+                f"| Exact: {exact} "
+                f"| Partial: {partial}"
+            )
+        print("-----------------------------")
+
     def run(self):
         print(
             f"Mastermind — enter {self.code_length} digits "
@@ -54,7 +69,16 @@ class Mastermind:
 
             if raw.lower() == "q":
                 self.game_over = True
+                print("\nGame quit.")
+                self.show_history()
                 return
+
+            if raw == "":
+                print(
+                    f"Enter exactly {self.code_length} digits "
+                    f"from 1 to {self.max_symbol}."
+                )
+                continue
 
             if (
                 len(raw) != self.code_length
@@ -76,14 +100,18 @@ class Mastermind:
             self.turns -= 1
 
             print("Exact:", exact, " Partial:", partial)
+            self.show_history()
 
             # Check win before checking whether turns are exhausted.
             if exact == self.code_length:
                 self.game_over = True
                 print("Cracked the code!")
+                self.show_history()
                 return
 
             # If the final turn was used without winning, the game is lost.
             if self.turns == 0:
                 self.game_over = True
                 print("Out of turns! The code was", "".join(self.code))
+                self.show_history()
+               
